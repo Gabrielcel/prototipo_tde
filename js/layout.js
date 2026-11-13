@@ -11,7 +11,7 @@ function login() {
   })}<button class="btn" style="justify-content:center">Entrar como gestor</button><button type="button" class="btn s" data-a="vol" style="justify-content:center">Entrar como voluntário</button><p class="hint">Acesso restrito. Seus dados e os das famílias são protegidos conforme a LGPD.</p></form></section></div>`;
 }
 function shell(c) {
-  const it = NAV.filter(n => S.role == 'g' || !n[3]);
+  const it = NAV;
   const act =
     S.view == 'nova' || S.view == 'familia' ? 'familias' : S.view == 'registro' ? 'agenda' : S.view;
   return `<div class="app"><aside><div class="brand"><div class="logo">S</div><div><b>Visitas Domiciliares</b><span>SESFA</span></div></div>${it

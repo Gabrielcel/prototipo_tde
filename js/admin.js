@@ -74,7 +74,7 @@ function umodal(i) {
       { v: esc(x.end || '') }
     )}${fld('Perfil', 'up', {
       sel: ['Voluntário', 'Gestor'],
-      h: 'Gestores acessam usuários e relatórios.',
+      h: 'Cadastre usuários e mantenha os dados de disponibilidade atualizados.',
     })}<fieldset class="fs"><legend class="sec" style="font-size:14px">Disponibilidade para visitas</legend><div class="bar">${DSM.map(
       (d, k) =>
         `<label style="display:flex;gap:6px;align-items:center;margin:0;font-weight:500"><input type="checkbox" id="ud${k}" style="width:20px;min-height:20px" ${

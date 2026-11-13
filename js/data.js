@@ -15,8 +15,8 @@ const NAV = [
   ['inicio', 'Início', 'home'],
   ['familias', 'Famílias', 'users'],
   ['agenda', 'Agenda', 'cal'],
-  ['usuarios', 'Usuários', 'shield', 'g'],
-  ['relatorios', 'Relatórios', 'chart', 'g'],
+  ['usuarios', 'Usuários', 'shield'],
+  ['relatorios', 'Relatórios', 'chart'],
   ['perfil', 'Perfil', 'user'],
 ];
 const ST = {

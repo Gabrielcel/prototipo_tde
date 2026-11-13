@@ -447,7 +447,7 @@ tr.c:hover td {
   background: var(--bg)
 }
 
-tr: last-child td {
+tr last-child td {
   border-bottom: 0
 }
 

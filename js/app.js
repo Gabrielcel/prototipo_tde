@@ -14,7 +14,7 @@ const VIEWS = {
 function render() {
   let v = location.hash.slice(1) || 'login';
   if (!VIEWS[v]) v = 'login';
-  if (S.role != 'g' && ['usuarios', 'relatorios', 'nova'].includes(v)) v = 'inicio';
+  if (S.role != 'g' && v == 'nova') v = 'inicio';
   S.view = v;
   S.errs = S.errs || {};
   const h = VIEWS[v]();
@@ -164,7 +164,7 @@ document.addEventListener('click', e => {
         r: 1,
       })}${fld('E-mail', 'ue', { r: 1, t: 'email' })}${fld('Perfil', 'up', {
         sel: ['Voluntário', 'Gestor'],
-        h: 'Gestores acessam usuários e relatórios.',
+        h: 'Cadastre usuários e mantenha os dados de disponibilidade atualizados.',
       })}</div><div class="bar"><button class="btn s" data-a="cm">Cancelar</button><button class="btn" data-a="su">Cadastrar</button></div>`
     );
   else if (a == 'su') {
