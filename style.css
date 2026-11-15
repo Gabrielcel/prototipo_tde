@@ -1,46 +1,27 @@
 /* Cores, temas e estilos de base */
 :root {
-  --az: #173B68;
-  --az2: #244E85;
-  --vd: #2F7D69;
-  --bg: #F3F6FA;
-  --tx: #243247;
-  --mu: #5B6B80;
-  --sf: #fff;
-  --bd: #E2E8F0;
+  --az: #2F6FAD;
+  --az2: #4B83BB;
+  --az-soft: #EAF3FC;
+  --az-hover: #DCEBFA;
+  --vd: #397F6F;
+  --bg: #F4F8FC;
+  --tx: #26394D;
+  --mu: #596F84;
+  --sf: #FFFFFF;
+  --bd: #D9E5F0;
   --ok: #1F6B3A;
   --okb: #E3F4EA;
   --wn: #8A5100;
   --wnb: #FFF1D6;
   --er: #B42318;
   --erb: #FDE8E6;
-  --in: #1D4F91;
-  --inb: #E4EEFB;
-  --sh: 0 1px 2px rgba(23,59,104,.08);
+  --in: #2F6FAD;
+  --inb: #E9F2FB;
+  --sh: 0 1px 2px rgba(47,111,173,.1);
   box-sizing: border-box;
   padding-top: env(safe-area-inset-top,0px);
   padding-bottom: env(safe-area-inset-bottom,0px)
-}
-
-@media (prefers-color-scheme:dark) {
-  :root:not([data-theme="light"]) {
-    --az: #8DB6EA;
-    --az2: #A9C8F0;
-    --vd: #5CC0A4;
-    --bg: #0F1724;
-    --tx: #E6ECF4;
-    --mu: #9AA9BC;
-    --sf: #17212F;
-    --bd: #2A3A50;
-    --ok: #7FDCA1;
-    --okb: #143A25;
-    --wn: #F5C26B;
-    --wnb: #40300F;
-    --er: #FF9C92;
-    --erb: #47181A;
-    --in: #9CC3F5;
-    --inb: #16294A
-  }
 }
 
 * {
@@ -92,7 +73,7 @@ button,input,select,textarea {
 }
 
 :focus-visible {
-  outline: 3px solid #F2A900;
+  outline: 3px solid var(--az2);
   outline-offset: 2px;
   border-radius: 6px
 }
@@ -105,8 +86,8 @@ button,input,select,textarea {
 }
 
 aside {
-  background: var(--az);
-  color: #fff;
+  background: var(--az-soft);
+  color: var(--tx);
   padding: 20px 14px;
   display: flex;
   flex-direction: column;
@@ -114,10 +95,6 @@ aside {
   position: sticky;
   top: 0;
   height: 100vh
-}
-
-:root[data-theme] aside,aside {
-  --az: #173B68
 }
 
 .brand {
@@ -132,7 +109,7 @@ aside {
   height: 36px;
   border-radius: 9px;
   background: #fff;
-  color: #173B68;
+  color: var(--az);
   display: grid;
   place-items: center;
   font-weight: 700
@@ -155,7 +132,7 @@ aside {
   gap: 12px;
   padding: 11px 12px;
   border-radius: 10px;
-  color: #DCE7F5;
+  color: var(--mu);
   background: none;
   border: 0;
   cursor: pointer;
@@ -165,12 +142,12 @@ aside {
 }
 
 .nav:hover {
-  background: rgba(255,255,255,.08)
+  background: var(--az-hover)
 }
 
 .nav[aria-current=page] {
   background: #fff;
-  color: #173B68;
+  color: var(--az);
   font-weight: 600
 }
 
@@ -188,7 +165,7 @@ svg.i {
 .who {
   margin-top: auto;
   padding: 12px;
-  border-top: 1px solid rgba(255,255,255,.15);
+  border-top: 1px solid var(--bd);
   font-size: 13px
 }
 
@@ -278,10 +255,6 @@ main {
   background: var(--az);
   color: #fff;
   white-space: nowrap
-}
-
-:root:not([data-theme="light"]) .btn:not(.s):not(.d):not(.t) {
-  color: #0F1724
 }
 
 .btn:hover {
@@ -384,7 +357,7 @@ input,select,textarea {
   width: 100%;
   min-height: 44px;
   padding: 9px 12px;
-  border: 1.5px solid #66768B;
+  border: 1.5px solid #8393A4;
   border-radius: 10px;
   background: var(--sf)
 }
@@ -531,10 +504,6 @@ tr last-child td {
   border-color: var(--az)
 }
 
-:root:not([data-theme="light"]) .chip[aria-pressed=true] {
-  color: #0F1724
-}
-
 .empty {
   text-align: center;
   padding: 40px 16px
@@ -560,7 +529,7 @@ tr last-child td {
 .ov {
   position: fixed;
   inset: 0;
-  background: rgba(15,23,36,.55);
+  background: rgba(38,57,77,.45);
   display: grid;
   place-items: center;
   padding: 16px;
@@ -587,12 +556,12 @@ tr last-child td {
   left: 50%;
   bottom: calc(88px + env(safe-area-inset-bottom,0px));
   transform: translateX(-50%);
-  background: #173B68;
+  background: var(--az);
   color: #fff;
   padding: 12px 18px;
   border-radius: 12px;
   z-index: 30;
-  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  box-shadow: 0 8px 24px rgba(38,57,77,.18);
   max-width: 92vw
 }
 
@@ -636,49 +605,144 @@ tr last-child td {
 
 /* Acesso e navegação */
 .login {
-  min-height: 100vh;
+  min-height: calc(100vh - 31px);
+  min-height: calc(100svh - 31px);
   display: grid;
-  grid-template-columns: 1fr 1fr
+  grid-template-columns: minmax(0, 1.05fr) minmax(380px, .95fr)
 }
 
 .lv {
-  background: var(--az);
-  color: #fff;
-  padding: 56px;
+  background: var(--az-soft);
+  color: var(--tx);
+  padding: clamp(32px, 5vw, 64px);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 16px
+  justify-content: space-between;
+  gap: 28px
 }
 
-:root[data-theme] .lv,.lv {
-  --az: #173B68;
-  background: #173B68
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--az)
 }
 
-.lv h1 {
-  font-size: 34px;
-  max-width: 14em
+.login-brand .logo {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+  font-size: 20px
 }
 
-.lv p {
-  opacity: .85;
-  max-width: 30em
+.login-brand b,.login-brand span {
+  display: block
+}
+
+.login-brand b {
+  font-size: 14px;
+  line-height: 1.2
+}
+
+.login-brand span {
+  margin-top: 3px;
+  color: var(--mu);
+  font-size: 12px
+}
+
+.login-copy {
+  max-width: 620px;
+  margin: 0 auto;
+  width: 100%
+}
+
+.login-eyebrow {
+  color: var(--az);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  margin-bottom: 10px
+}
+
+.login-copy h1 {
+  font-size: clamp(30px, 3.2vw, 42px);
+  line-height: 1.15;
+  max-width: 13ch
+}
+
+.login-copy p:last-child {
+  color: var(--mu);
+  font-size: 15px;
+  line-height: 1.65;
+  max-width: 54ch;
+  margin-top: 14px
+}
+
+.login-visual {
+  width: 100%;
+  max-width: 720px;
+  aspect-ratio: 16 / 9;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(47, 111, 173, .12);
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(38, 57, 77, .12)
+}
+
+.login-visual img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center
 }
 
 .lf {
   display: grid;
   place-items: center;
-  padding: 32px
+  padding: clamp(24px, 5vw, 64px);
+  background: var(--sf)
 }
 
 .lf form {
   width: 100%;
-  max-width: 380px;
+  max-width: 440px;
   display: grid;
-  gap: 16px
+  gap: 18px;
+  padding: clamp(24px, 3.5vw, 40px);
+  border: 1px solid var(--bd);
+  border-radius: 18px;
+  background: var(--sf);
+  box-shadow: 0 12px 36px rgba(38, 57, 77, .08)
 }
 
+.login-form-heading h2 {
+  font-size: 24px
+}
+
+.login-form-heading p {
+  color: var(--mu);
+  font-size: 14px;
+  margin-top: 6px
+}
+
+.login-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 2px
+}
+
+.login-submit,.login-volunteer {
+  width: 100%;
+  justify-content: center
+}
+
+.login-notice {
+  line-height: 1.55;
+  margin-top: 0
+}
 .bn {
   display: none
 }
@@ -706,13 +770,26 @@ tr last-child td {
     grid-template-columns: 1fr
   }
   .login {
+    min-height: auto;
     grid-template-columns: 1fr
   }
   .lv {
-    padding: 28px 20px
+    padding: 28px 20px;
+    gap: 22px
   }
-  .lv h1 {
-    font-size: 24px
+  .login-copy h1 {
+    font-size: 30px
+  }
+  .login-visual {
+    aspect-ratio: 16 / 9;
+    max-height: 260px
+  }
+  .lf {
+    padding: 24px 16px 32px
+  }
+  .lf form {
+    max-width: 500px;
+    padding: 24px
   }
 
 .bn {
@@ -794,5 +871,50 @@ thead {
       transform: translateY(10px);
       opacity: 0
     }
+  }
+}
+
+/* Navegação e leitura em telas estreitas */
+@media (max-width: 900px) {
+  .app,
+  main {
+    min-width: 0;
+  }
+
+  .bn {
+    justify-content: flex-start;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+  }
+
+  .bn button {
+    flex: 0 0 72px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 560px) {
+  main {
+    padding: 16px 12px 112px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .dlg {
+    padding: 20px 16px;
+    max-height: calc(100dvh - 32px);
+  }
+
+  .sticky {
+    flex-wrap: wrap;
+  }
+
+  .sticky .btn {
+    flex: 1 1 140px;
+    white-space: normal;
+    text-align: center;
   }
 }

@@ -1,14 +1,43 @@
 // Entrada, navegação e telas iniciais
 // Telas iniciais do protótipo
 function login() {
-  return `<div class="login"><section class="lv"><div class="logo" style="width:48px;height:48px">S</div><h1>Visitas domiciliares com acompanhamento organizado</h1><p>Módulo da SESFA para gestores e voluntários registrarem visitas, necessidades e encaminhamentos das famílias atendidas.</p></section><section class="lf"><form data-a="login" novalidate><div><h2 style="font-size:22px">Entrar no sistema</h2><p class="mu">Use o e-mail cadastrado pela gestão.</p></div>${
-    S.errs.login
-      ? `<div class="alert b-er" role="alert"><b>!</b><span>${S.errs.login}</span></div>`
-      : ''
-  }${fld('E-mail', 'em', { r: 1, t: 'email', ph: 'nome@sesfa.org' })}${fld('Senha', 'pw', {
-    r: 1,
-    t: 'password',
-  })}<button class="btn" style="justify-content:center">Entrar como gestor</button><button type="button" class="btn s" data-a="vol" style="justify-content:center">Entrar como voluntário</button><p class="hint">Acesso restrito. Seus dados e os das famílias são protegidos conforme a LGPD.</p></form></section></div>`;
+  const setup = S.authInitialized === false;
+  return `<div class="login">
+    <section class="lv" aria-labelledby="login-title">
+      <div class="login-brand">
+        <div class="logo" aria-hidden="true">S</div>
+        <div><b>SESFA</b><span>Visitas domiciliares</span></div>
+      </div>
+      <div class="login-copy">
+        <p class="login-eyebrow">Cuidado e acompanhamento próximo</p>
+        <h1 id="login-title">Visitas domiciliares com acompanhamento organizado</h1>
+        <p>Módulo da SESFA para gestores e voluntários registrarem visitas, necessidades e encaminhamentos das famílias atendidas.</p>
+      </div>
+      <figure class="login-visual">
+        <img src="assets/conversa-acompanhamento.png" alt="Profissional conversa com um casal em um ambiente de atendimento acolhedor." fetchpriority="high">
+      </figure>
+    </section>
+    <section class="lf" aria-labelledby="login-form-title">
+      <form class="login-form" data-a="${setup ? 'setup' : 'login'}" novalidate>
+        <div class="login-form-heading">
+          <h2 id="login-form-title">${setup ? 'Configurar acesso inicial' : 'Entrar no sistema'}</h2>
+          <p>${setup ? 'Crie a primeira conta de gestor para começar.' : 'Use o e-mail e a senha da sua conta.'}</p>
+        </div>
+        ${
+          S.errs.login
+            ? `<div class="alert b-er" role="alert"><b>!</b><span>${S.errs.login}</span></div>`
+            : ''
+        }
+        ${setup ? fld('Nome completo', 'setup-name', { r: 1 }) : ''}
+        ${fld('E-mail', 'em', { r: 1, t: 'email', ph: 'nome@sesfa.org' })}
+        ${fld('Senha', 'pw', { r: 1, t: 'password', h: setup ? 'Use pelo menos 8 caracteres.' : '' })}
+        <div class="login-actions">
+          <button class="btn login-submit">${setup ? 'Criar acesso de gestor' : 'Entrar'}</button>
+        </div>
+        <p class="hint login-notice">Acesso restrito. Seus dados e os das famílias são protegidos conforme a LGPD.</p>
+      </form>
+    </section>
+  </div>`;
 }
 function shell(c) {
   const it = NAV;
@@ -23,7 +52,7 @@ function shell(c) {
     )
     .join('')}<div class="who"><b>${me()}</b><span>${
     S.role == 'g' ? 'Gestor' : 'Voluntário'
-  }</span><button class="btn t" style="color:#fff;padding:0;margin-top:6px" data-a="go" data-v="login">Sair</button></div></aside><main>${c}</main></div><nav class="bn" aria-label="Principal">${it
+  }</span><button class="btn t" style="color:#fff;padding:0;margin-top:6px" data-a="logout">Sair</button></div></aside><main>${c}</main></div><nav class="bn" aria-label="Principal">${it
     .map(
       n =>
         `<button data-a="go" data-v="${n[0]}" ${act == n[0] ? 'aria-current="page"' : ''}>${ic(
@@ -33,9 +62,12 @@ function shell(c) {
     .join('')}</nav>`;
 }
 function inicio() {
-  const my = V.filter(v => S.role == 'g' || v.r == 'Ana L.');
+  const my = V.filter(v => S.role == 'g' || v.assignedTo == S.user?.id);
+  const myNeeds = NEED.filter(need =>
+    S.role === 'g' || V.some(visit => visit.id === need.visitUUID && visit.assignedTo === S.user?.id)
+  );
   const sem = V.filter(v => v.s == 'Sem responsável').length,
-    pend = NEED.filter(n => !n.e).length;
+    pend = myNeeds.filter(n => !n.e).length;
   const prox = my.filter(v => ['Agendada', 'Sem responsável', 'Reagendada'].includes(v.s));
   const att = [
     S.role == 'g' && sem
@@ -45,28 +77,28 @@ function inicio() {
       : '',
     pend
       ? `<div class="item"><div class="g"><b>${pend} necessidade sem encaminhamento</b><p class="mu">Família ${
-          (NEED.find(n => !n.e) || {}).f
+          (myNeeds.find(n => !n.e) || {}).f
         } · ${
-          (NEED.find(n => !n.e) || {}).t
+          (myNeeds.find(n => !n.e) || {}).t
         }</p></div><button class="btn sm s" data-a="fam" data-id="${
-          (NEED.find(n => !n.e) || { f: '0142' }).f
+          (myNeeds.find(n => !n.e) || { f: '0000' }).f
         }" data-t="Necessidades">Ver necessidade</button></div>`
       : '',
-    `<div class="item"><div class="g"><b>1 visita reagendada para 03/11</b><p class="mu">Confirme a presença do voluntário responsável.</p></div><button class="btn sm s" data-a="go" data-v="agenda">Abrir agenda</button></div>`,
+    `<div class="item"><div class="g"><b>${V.filter(v => v.s == 'Reagendada').length} visita(s) reagendada(s)</b><p class="mu">Confira a data atualizada e retome o acompanhamento.</p></div><button class="btn sm s" data-a="go" data-v="agenda">Abrir agenda</button></div>`,
   ].join('');
   return (
     head(
       'Início',
-      'Quinta-feira, 29 de outubro',
+      'Acompanhe visitas, encaminhamentos e pendências.',
       `<button class="btn" data-a="agendar">${ic('plus')}Agendar visita</button>`
     ) +
     `<div class="grid g3" style="margin-bottom:16px"><div class="card stat"><b>${
-      my.filter(v => v.d == '29/10').length
+      my.filter(v => new Date(v.scheduledAt).toDateString() === new Date().toDateString()).length
     }</b><span class="mu">visitas hoje</span></div><div class="card stat"><b>${
       my.filter(v => v.s == 'Concluída').length
-    }</b><span class="mu">concluídas esta semana</span></div><div class="card stat"><b>${
-      NEED.length
-    }</b><span class="mu">necessidades em aberto</span></div></div><div class="grid g2"><section class="card"><h2 style="margin-bottom:14px">Precisa de atenção</h2>${att}</section><section class="card"><h2 style="margin-bottom:14px">Próximas visitas</h2>${prox
+    }</b><span class="mu">visitas concluídas</span></div><div class="card stat"><b>${
+      NEED.filter(n => !n.e).length
+    }</b><span class="mu">necessidades pendentes</span></div></div><div class="grid g2"><section class="card"><h2 style="margin-bottom:14px">Pendências e próximos passos</h2>${att}</section><section class="card"><h2 style="margin-bottom:14px">Próximas visitas</h2>${prox
       .slice(0, 4)
       .map(
         v =>

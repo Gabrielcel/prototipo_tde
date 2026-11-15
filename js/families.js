@@ -80,7 +80,7 @@ function familia() {
   return (
     head(
       'Família ' + f.id,
-      'Cadastro, histórico e necessidades registradas.',
+      'Veja o histórico, os dados familiares e as necessidades registradas.',
       `<button class="btn s">Editar</button><button class="btn" data-a="agendar">Agendar visita</button>`,
       back('familias', 'Famílias') + ' / ' + f.id
     ) +
@@ -224,8 +224,8 @@ function familia() {
   return (
     head(
       'Família ' + f.id,
-      'Cadastro, histórico e necessidades registradas.',
-      `<button class="btn" data-a="agendar">Agendar visita</button>`,
+      'Veja o histórico, os dados familiares e as necessidades registradas.',
+      (S.role == 'g' ? `<button class="btn" data-a="agendar">Agendar visita</button>` : ''),
       back('familias', 'Famílias') + ' / ' + f.id
     ) +
     `<div class="card"><div class="bar" style="margin-bottom:16px">${bd2(f.s)}<span class="mu">${

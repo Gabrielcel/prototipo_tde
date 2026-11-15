@@ -1,6 +1,35 @@
 // Ações acionadas pelos controles da interface
 // Eventos declarados em app.js usam este mapa.
 const H = {
+  fam: async (t, id) => {
+    try {
+      const { family } = await API.request(`/families/${encodeURIComponent(familyUUID(id))}`);
+      const local = FAM.find(item => item.uuid === family.id);
+      Object.assign(local, {
+        tel: family.phone || '', ee: family.email || '',
+        end: [family.street, family.neighborhood, family.city, family.postalCode].filter(Boolean).join(', '),
+        ocup: family.occupation || '', renda: incomeLabel(family.incomeRange),
+        mem: family.members.map(member => ({ n: member.fullName, p: member.relationship, dn: member.birthDate || '' })),
+      });
+      S.fid = local.id;
+      S.tab = t.dataset.t || 'Resumo';
+      S.showc = false;
+      go('familia');
+      render();
+    } catch (error) {
+      apiFailure(error);
+    }
+  },
+  logout: async () => {
+    try {
+      await API.logout();
+      S.errs = {};
+      location.hash = 'login';
+      render();
+    } catch (error) {
+      apiFailure(error);
+    }
+  },
   agendar: () => {
     vmodal(0, 'new');
     const o = [...G('vf').options].find(o => o.text.startsWith(S.fid));
@@ -25,7 +54,47 @@ const H = {
     S.mem.splice(i, 1);
     render();
   },
-  savef: () => saveFam(true),
+  savef: async () => {
+    keep();
+    const value = S.v;
+    S.errs = {};
+    [['nm', 'Informe o nome do responsável.'], ['nc', 'Informe a data de nascimento.'], ['tel', 'Informe um telefone.'], ['rua', 'Informe a rua e o número.'], ['bai', 'Informe o bairro.'], ['cid', 'Informe a cidade.']].forEach(([field, message]) => {
+      if (!(value[field] || '').trim()) S.errs[field] = message;
+    });
+    if (!value.cons) S.errs.cons = 'Confirme o consentimento para salvar.';
+    if (Object.keys(S.errs).length) return render();
+    if (!S.dup) {
+      const phone = (value.tel || '').replace(/\D/g, '');
+      S.dup = FAM.find(family =>
+        (phone && family.tel.replace(/\D/g, '') === phone) ||
+        family.nm.toLowerCase() === value.nm.trim().toLowerCase()
+      ) || null;
+      if (S.dup) return render();
+    }
+
+    try {
+      const result = await API.request('/families', {
+        method: 'POST',
+        write: true,
+        body: {
+          contactName: value.nm.trim(), birthDate: value.nc || null,
+          phone: value.tel.trim(), email: value.ee.trim(), street: value.rua.trim(),
+          neighborhood: value.bai.trim(), city: value.cid.trim(), postalCode: value.cep.trim(),
+          occupation: value.oc.trim(), incomeRange: value.rd, consentGiven: true,
+          members: S.mem.map(member => ({ fullName: member.n, relationship: member.p, birthDate: member.dn || null })),
+        },
+      });
+      await API.loadApplicationData();
+      S.v = {};
+      S.mem = [];
+      S.dup = null;
+      go('familias');
+      render();
+      toast(`Família ${result.family.code} cadastrada.`);
+    } catch (error) {
+      apiFailure(error);
+    }
+  },
   addn: () => {
     keep();
     const v = S.v;
@@ -45,22 +114,38 @@ const H = {
         'et',
         { sel: ['Encaminhamento', 'Pendência'] }
       )}${fld('Responsável', 'er', {
-        sel: U.filter(u => u[2] == 'Ativo').map(u => u[0]),
+        sel: vols().map(u => u[0]),
       })}</div><div class="bar"><button class="btn s" data-a="cm">Cancelar</button><button class="btn" data-a="ec" data-src="${
         t.dataset.src
       }" data-i="${i}">Confirmar</button></div>`
     ),
-  ec: (t, id, i) => {
+  ec: async (t, id, i) => {
     const r = t.dataset.src == 'r',
       n = (r ? S.reg : NEED)[i];
     n.e = G('er').value;
     n.k = n.k0 = G('et').value;
+    n.responsibleUserId = volunteerUUID(n.e);
     modal('');
-    if (r) keep();
+    if (r) {
+      keep();
+    } else {
+      try {
+        await API.request(`/needs/${encodeURIComponent(n.id)}/referrals`, {
+          method: 'POST', write: true,
+          body: {
+            type: n.k === 'Pendência' ? 'pendencia' : 'encaminhamento',
+            responsibleUserId: n.responsibleUserId,
+          },
+        });
+        await API.loadApplicationData();
+      } catch (error) {
+        return apiFailure(error);
+      }
+    }
     render();
     toast(n.k + ' registrado para ' + n.e);
   },
-  fin: () => {
+  fin: async () => {
     keep();
     const v = S.v,
       vis = V.find(x => x.id == S.vid);
@@ -74,16 +159,44 @@ const H = {
       if (e) e.scrollIntoView({ block: 'center' });
       return;
     }
-    vis.s = 'Concluída';
-    vis.ck = CK.map((c, i) => [c, v['c' + i]]);
-    vis.co = v.co;
-    vis.ob = v.ob;
-    S.reg.forEach(n => NEED.push({ f: vis.f, ...n, k0: n.k }));
-    go('agenda');
-    toast('Visita concluída e checklist registrado');
+    try {
+      const result = await API.request(`/visits/${encodeURIComponent(vis.id)}/record`, {
+        method: 'POST',
+        write: true,
+        body: {
+          checklistAnswers: CK.map((item, i) => ({ item, answer: v['c' + i] })),
+          conditions: v.co || '',
+          observations: v.ob || '',
+          needs: S.reg.map(item => ({
+            category: item.t,
+            description: item.d,
+            priority: apiPriority(item.p),
+            ...(item.responsibleUserId
+              ? { referral: { type: item.k === 'Pendência' ? 'pendencia' : 'encaminhamento', responsibleUserId: item.responsibleUserId } }
+              : {}),
+          })),
+        },
+      });
+      S.reg = [];
+      await API.refresh();
+      go('agenda');
+      render();
+      toast('Visita concluída e registro salvo.');
+    } catch (error) {
+      apiFailure(error);
+    }
   },
-  vr: (t, id) => {
+  vr: async (t, id) => {
     const v = V.find(x => x.id == id);
+    try {
+      const result = await API.request(`/visits/${encodeURIComponent(id)}`);
+      const record = result.visit.record;
+      v.ck = record?.checklist_answers?.map(answer => [answer.item, answer.answer]) || [];
+      v.co = record?.conditions || '';
+      v.ob = record?.observations || '';
+    } catch (error) {
+      return apiFailure(error);
+    }
     modal(
       `<h2>Registro da visita</h2><p class="mu">Família ${v.f} · ${v.d} às ${v.h} · ${
         v.r
@@ -103,61 +216,46 @@ const H = {
       }</p><div class="bar"><button class="btn s" data-a="cm">Fechar</button></div>`
     );
   },
-  sv: () => {
-    const d = G('vd').value,
-      h = G('vh').value,
-      r = G('vr') ? G('vr').value : 'Ana L.',
-      f = G('vf').value.slice(0, 4),
-      dd = d && dm(d),
-      er =
-        !d || !h
-          ? 'Preencha data e horário para confirmar.'
-          : d < TODAY
-          ? 'Escolha uma data a partir de hoje (29/10).'
-          : V.some(v => v.f == f && v.d == dd && OPEN.includes(v.s))
-          ? 'A família ' + f + ' já tem visita aberta em ' + dd + '.'
-          : r && !free(r, dd, h, 0)
-          ? r + ' já tem visita em ' + dd + ' às ' + h + '. Escolha outro horário ou responsável.'
-          : '';
-    if (er) {
-      G('cf').innerHTML = al('b-er', er);
-      return;
+  sv: async () => {
+    const date = G('vd').value;
+    const time = G('vh').value;
+    const code = G('vf').value.split(' · ')[0];
+    try {
+      await API.request('/visits', {
+        method: 'POST',
+        write: true,
+        body: {
+          familyId: familyUUID(code),
+          scheduledAt: localDateTime(date, time),
+          priority: apiPriority(G('vp').value),
+          assignedTo: volunteerUUID(G('vr')?.value || ''),
+        },
+      });
+      modal('');
+      await API.refresh();
+      toast('Visita agendada.');
+    } catch (error) {
+      G('cf').innerHTML = al('b-er', esc(error.message));
     }
-    V.push({
-      id: Math.max(...V.map(x => x.id)) + 1,
-      d: dd,
-      w: '',
-      h,
-      f,
-      r,
-      p: G('vp').value,
-      s: r ? 'Agendada' : 'Sem responsável',
-    });
-    modal('');
-    render();
-    toast('Visita agendada');
   },
-  sd: (t, id) => {
-    const v = V.find(x => x.id == id),
-      r = G('vr').value;
-    if (!r) {
-      G('cf').innerHTML = al('b-er', 'Não há voluntários ativos.');
+  sd: async (t, id) => {
+    const volunteerId = volunteerUUID(G('vr').value);
+    if (!volunteerId) {
+      G('cf').innerHTML = al('b-er', 'Selecione um voluntário ativo.');
       return;
     }
-    if (!free(r, v.d, v.h, id)) {
-      G('cf').innerHTML = al(
-        'b-wn',
-        r + ' já tem visita em ' + v.d + ' às ' + v.h + '. Escolha outro responsável.'
-      );
-      return;
+    try {
+      await API.request(`/visits/${encodeURIComponent(id)}`, {
+        method: 'PATCH', write: true, body: { assignedTo: volunteerId },
+      });
+      modal('');
+      await API.refresh();
+      toast('Visita atribuída.');
+    } catch (error) {
+      G('cf').innerHTML = al('b-er', esc(error.message));
     }
-    v.r = r;
-    if (v.s == 'Sem responsável') v.s = 'Agendada';
-    modal('');
-    render();
-    toast('Visita atribuída a ' + r);
   },
-  rc: (t, id) => {
+  rc: async (t, id) => {
     const v = V.find(x => x.id == id),
       rg = G('ra').value == 'Reagendar',
       mo = G('mo').value.trim(),
@@ -167,24 +265,25 @@ const H = {
         ? 'Informe o motivo para continuar.'
         : rg && (!d || !h)
         ? 'Informe a nova data e o novo horário.'
-        : rg && d < TODAY
-        ? 'Escolha uma data a partir de hoje (29/10).'
-        : rg && v.r && !free(v.r, dm(d), h, v.id)
-        ? v.r + ' já tem visita nesse horário.'
         : '';
     if (er) {
       G('cf').innerHTML = al('b-er', er);
       return;
     }
-    if (rg) {
-      v.d = dm(d);
-      v.h = h;
-      v.s = v.r ? 'Reagendada' : 'Sem responsável';
-    } else v.s = 'Cancelada';
-    v.mo = mo;
-    modal('');
-    render();
-    toast(rg ? 'Visita reagendada para ' + v.d + ' às ' + v.h : 'Visita cancelada');
+    try {
+      await API.request(`/visits/${encodeURIComponent(id)}`, {
+        method: 'PATCH',
+        write: true,
+        body: rg
+          ? { scheduledAt: localDateTime(d, h), reason: mo }
+          : { status: 'cancelada', reason: mo },
+      });
+      modal('');
+      await API.refresh();
+      toast(rg ? 'Visita reagendada.' : 'Visita cancelada.');
+    } catch (error) {
+      G('cf').innerHTML = al('b-er', esc(error.message));
+    }
   },
   nu: () => umodal(-1),
   eu: (t, id, i) => umodal(i),
@@ -236,11 +335,48 @@ const H = {
     render();
     toast('Usuário desativado' + (n ? ' · ' + n + ' visita(s) aguardando nova distribuição' : ''));
   },
+  nu: () => modal(
+    `<h2>Novo usuário</h2><div class="grid" style="margin-top:14px">${fld('Nome completo', 'un', { r: 1 })}${fld('E-mail', 'ue', { r: 1, t: 'email' })}${fld('Senha inicial', 'upw', { r: 1, t: 'password', h: 'Use pelo menos 8 caracteres. Informe a senha à pessoa de forma segura.' })}${fld('Perfil', 'up', { sel: S.role === 'g' ? ['Voluntário', 'Gestor'] : ['Voluntário'] })}</div><div id="cf"></div><div class="bar"><button class="btn s" data-a="cm">Cancelar</button><button class="btn" data-a="su">Cadastrar</button></div>`
+  ),
+  su: async () => {
+    const fullName = G('un').value.trim();
+    const email = G('ue').value.trim();
+    const password = G('upw').value;
+    if (!fullName || !/^\S+@\S+\.\S+$/.test(email) || password.length < 8) {
+      G('cf').innerHTML = al('b-er', 'Informe nome, e-mail válido e senha com pelo menos 8 caracteres.');
+      return;
+    }
+    try {
+      await API.request('/users', {
+        method: 'POST', write: true,
+        body: { fullName, email, password, role: G('up').value === 'Gestor' ? 'gestor' : 'voluntario' },
+      });
+      modal('');
+      await API.refresh();
+      toast('Usuário cadastrado.');
+    } catch (error) {
+      G('cf').innerHTML = al('b-er', esc(error.message));
+    }
+  },
+  tog: async (t, id, i) => {
+    const user = U[i];
+    if (!user?.uuid) return apiFailure(new Error('Usuário inválido.'));
+    const status = user[2] === 'Ativo' ? 'inativo' : 'ativo';
+    try {
+      await API.request(`/users/${encodeURIComponent(user.uuid)}/status`, {
+        method: 'PATCH', write: true, body: { status },
+      });
+      await API.refresh();
+      toast(status === 'ativo' ? 'Acesso reativado.' : 'Acesso desativado.');
+    } catch (error) {
+      apiFailure(error);
+    }
+  },
   exp: () => {
     const csv = [
       'Data;Horário;Família;Responsável;Prioridade;Status;Motivo',
       ...rvs().map(v =>
-        [v.d + '/2026', v.h, v.f, v.r || '', v.p, v.s, (v.mo || '').replace(/[;\n]/g, ' ')].join(
+        [new Date(v.scheduledAt).toLocaleDateString('pt-BR'), v.h, v.f, v.r || '', v.p, v.s, (v.mo || '').replace(/[;\n]/g, ' ')].join(
           ';'
         )
       ),

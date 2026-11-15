@@ -147,10 +147,14 @@ function saveFam(force) {
   toast('Família ' + id + ' cadastrada');
 }
 const rvs = () => {
-  const R = {
-    'Todo o período': [0, 1299],
-    'Últimos 7 dias': [1022, 1029],
-    'Este mês': [1001, 1031],
-  }[S.rp];
-  return V.filter(v => key(v.d) >= R[0] && key(v.d) <= R[1] && (S.rv == 'Todos' || v.r == S.rv));
+  const today = new Date();
+  const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  if (S.rp === 'Últimos 7 dias') start.setDate(start.getDate() - 6);
+  if (S.rp === 'Este mês') start.setDate(1);
+  return V.filter(visit => {
+    const date = new Date(visit.scheduledAt);
+    const inRange = S.rp === 'Todo o período' || (!Number.isNaN(date.getTime()) && date >= start && date <= today);
+    const matchesVolunteer = S.rv === 'Todos' || visit.r === S.rv;
+    return inRange && matchesVolunteer;
+  });
 };

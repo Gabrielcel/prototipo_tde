@@ -5,8 +5,8 @@ function agenda() {
   return (
     head(
       'Agenda de visitas',
-      S.role == 'g' ? 'Todas as visitas, com responsáveis e status.' : 'Suas visitas atribuídas.',
-      `<button class="btn" data-a="agendar">${ic('plus')}Agendar visita</button>`
+      S.role == 'g' ? 'Consulte as visitas, responsáveis e situações.' : 'Consulte suas visitas e registre o acompanhamento.',
+      (S.role == 'g' ? `<button class="btn" data-a="agendar">${ic('plus')}Agendar visita</button>` : '')
     ) +
     `<div class="bar" style="margin-bottom:16px" role="group" aria-label="Filtrar por status">${F.map(
       x =>
@@ -35,7 +35,7 @@ function agenda() {
                 }</div></div>`
             )
             .join('')
-        : `<div class="empty"><h3>Nenhuma visita neste filtro</h3><button class="btn s" data-a="vf" data-t="Todas">Ver todas</button></div>`
+        : `<div class="empty"><h3>Nenhuma visita encontrada</h3><p class="mu">Altere o filtro para consultar outros status.</p><button class="btn s" data-a="vf" data-t="Todas">Ver todas as visitas</button></div>`
     }</div>`
   );
 }
@@ -69,7 +69,7 @@ function registro() {
       )
       .join(
         ''
-      )}</div><div class="sticky"><button class="btn s" data-a="go" data-v="agenda">Cancelar</button><button class="btn" data-a="fin">Concluir visita</button></div>`
+      )}</div><div class="sticky"><button class="btn s" data-a="go" data-v="agenda">Voltar para agenda</button><button class="btn" data-a="fin">Concluir e salvar visita</button></div>`
   );
 }
 
@@ -152,13 +152,13 @@ function vmodal(id, mode) {
 function agenda() {
   const F = ['Todas', 'Agendada', 'Sem responsável', 'Reagendada', 'Concluída', 'Cancelada'];
   const l = V.filter(
-    v => (S.role == 'g' || v.r == 'Ana L.') && (S.vf == 'Todas' || v.s == S.vf)
-  ).sort((a, b) => key(a.d) - key(b.d) || a.h.localeCompare(b.h));
+    v => (S.role == 'g' || v.assignedTo == S.user?.id) && (S.vf == 'Todas' || v.s == S.vf)
+  ).sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt));
   return (
     head(
       'Agenda de visitas',
-      S.role == 'g' ? 'Todas as visitas, com responsáveis e status.' : 'Suas visitas atribuídas.',
-      `<button class="btn" data-a="agendar">${ic('plus')}Agendar visita</button>`
+      S.role == 'g' ? 'Consulte as visitas, responsáveis e situações.' : 'Consulte suas visitas e registre o acompanhamento.',
+      (S.role == 'g' ? `<button class="btn" data-a="agendar">${ic('plus')}Agendar visita</button>` : '')
     ) +
     `<div class="bar" style="margin-bottom:16px" role="group" aria-label="Filtrar por status">${F.map(
       x =>
@@ -181,11 +181,11 @@ function agenda() {
                     }</button>`
                   : ''
               }${
-                v.r && o
+                v.r && o && (S.role == 'g' || v.assignedTo == S.user?.id)
                   ? `<button class="btn sm" data-a="reg" data-id="${v.id}">Registrar visita</button>`
                   : ''
               }${
-                o
+                o && S.role == 'g'
                   ? `<button class="btn sm s" data-a="rea" data-id="${v.id}">Reagendar ou cancelar</button>`
                   : ''
               }${
@@ -195,7 +195,7 @@ function agenda() {
               }</div></div>`;
             })
             .join('')
-        : `<div class="empty"><h3>Nenhuma visita neste filtro</h3><button class="btn s" data-a="vf" data-t="Todas">Ver todas</button></div>`
+        : `<div class="empty"><h3>Nenhuma visita encontrada</h3><p class="mu">Altere o filtro para consultar outros status.</p><button class="btn s" data-a="vf" data-t="Todas">Ver todas as visitas</button></div>`
     }</div>`
   );
 }
@@ -234,6 +234,6 @@ function registro() {
       )
       .join(
         ''
-      )}</div><div class="sticky"><button class="btn s" data-a="go" data-v="agenda">Cancelar</button><button class="btn" data-a="fin">Concluir visita</button></div>`
+      )}</div><div class="sticky"><button class="btn s" data-a="go" data-v="agenda">Voltar para agenda</button><button class="btn" data-a="fin">Concluir e salvar visita</button></div>`
   );
 }

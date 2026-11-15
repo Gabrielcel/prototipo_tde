@@ -32,6 +32,8 @@ const bd = s =>
 const pb = p => `<span class="badge ${PR[p]}">Prioridade ${p.toLowerCase()}</span>`;
 let S = {
   role: 'g',
+  user: null,
+  authInitialized: true,
   view: 'login',
   tab: 'Resumo',
   fid: '0142',
@@ -68,7 +70,7 @@ const U = [
   ['Davi Rocha', 'Voluntário', 'Inativo'],
 ];
 const fam = id => FAM.find(x => x.id == id);
-const me = () => (S.role == 'g' ? 'Carla Mendes' : 'Ana Lima');
+const me = () => S.user?.fullName || (S.role == 'g' ? 'Gestor' : 'Voluntário');
 const go = v => {
   S.v = {};
   S.mem = [];

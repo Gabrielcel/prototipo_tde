@@ -13,8 +13,16 @@ const VIEWS = {
 };
 function render() {
   let v = location.hash.slice(1) || 'login';
+  if (!API.user && v !== 'login') v = 'login';
+  if (API.user && v === 'login') v = 'inicio';
   if (!VIEWS[v]) v = 'login';
   if (S.role != 'g' && v == 'nova') v = 'inicio';
+  if (v === 'relatorios' && API.user) {
+    const reportKey = `${S.rp}|${S.rv}|${API.user.id}`;
+    if (S.reportSummaryKey !== reportKey) {
+      API.loadReportSummary().catch(apiFailure);
+    }
+  }
   S.view = v;
   S.errs = S.errs || {};
   const h = VIEWS[v]();
@@ -34,14 +42,14 @@ document.addEventListener('click', e => {
   if (H[a]) {
     S.errs = {};
     e.stopImmediatePropagation();
-    H[a](t, +t.dataset.id, +t.dataset.i);
+    H[a](t, t.dataset.id, +t.dataset.i);
   }
 });
 document.addEventListener('submit', e => {
   if (e.target.dataset.a == 'save') {
     e.preventDefault();
     e.stopImmediatePropagation();
-    saveFam(false);
+    H.savef();
   }
 });
 document.addEventListener('change', e => {
@@ -58,15 +66,12 @@ document.addEventListener('click', e => {
   const t = e.target.closest('[data-a]');
   if (!t) return;
   const a = t.dataset.a,
-    id = +t.dataset.id;
+    id = t.dataset.id;
   const $ = i => document.getElementById(i);
   if (a == 'bg') {
     if (e.target == t) modal('');
   } else if (a == 'go') {
     go(t.dataset.v);
-  } else if (a == 'vol') {
-    S.role = 'v';
-    go('inicio');
   } else if (a == 'fam') {
     S.fid = t.dataset.id;
     S.tab = t.dataset.t || 'Resumo';
@@ -214,8 +219,30 @@ document.addEventListener('submit', e => {
       return;
     }
     S.errs = {};
-    S.role = 'g';
-    go('inicio');
+    API.login($('em').value.trim(), $('pw').value).then(() => {
+      S.errs = {};
+      location.hash = 'inicio';
+      render();
+    }).catch(error => {
+      S.errs.login = error.message;
+      render();
+    });
+  } else if (f.dataset.a == 'setup') {
+    const fullName = $('setup-name').value.trim();
+    const email = $('em').value.trim();
+    const password = $('pw').value;
+    if (!fullName || !email || password.length < 8) {
+      S.errs.login = 'Preencha nome, e-mail e uma senha com pelo menos 8 caracteres.';
+      render();
+      return;
+    }
+    API.bootstrap({ fullName, email, password }).then(() => {
+      location.hash = 'inicio';
+      render();
+    }).catch(error => {
+      S.errs.login = error.message;
+      render();
+    });
   } else if (f.dataset.a == 'save') {
     const k = ['nm', 'tel', 'rua', 'bai'],
       lb = {
@@ -272,4 +299,23 @@ document.addEventListener('keydown', e => {
   if (e.key == 'Escape') modal('');
 });
 addEventListener('hashchange', render);
-render();
+
+async function startApp() {
+  try {
+    const status = await API.request('/auth/status');
+    S.authInitialized = status.initialized;
+    if (status.initialized) {
+      try {
+        await API.restoreSession();
+        if (!location.hash || location.hash === '#login') location.hash = 'inicio';
+      } catch {
+        // Sem sessão ativa, mantém a pessoa na tela de entrada.
+      }
+    }
+  } catch {
+    S.errs.login = 'Não foi possível conectar à API. Confira se o servidor está iniciado.';
+  }
+  render();
+}
+
+startApp();
