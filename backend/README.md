@@ -13,12 +13,12 @@ API em JavaScript com o Node.js, usando HTTP nativo e PostgreSQL. O único pacot
 1. No pgAdmin, crie um banco chamado `sesfa_dev`.
 2. Abra o Query Tool desse banco e execute os arquivos em ordem: `database/001_schema.sql`, `database/002_seed_demo.sql` e `database/003_user_sessions.sql`.
 3. O arquivo `002_seed_demo.sql` insere registros fictícios e pode ser repetido sem duplicá-los. Execute `001_schema.sql` apenas uma vez por banco.
-4. Crie `backend/.env` com `PGHOST`, `PGDATABASE`, `PGUSER` e `PGPASSWORD`. `PGPORT` é opcional e usa `5432` por padrão.
+4. Na pasta `backend`, copie `.env.example` para `.env` e substitua `COLOQUE_SUA_SENHA_AQUI` pela senha local do PostgreSQL. Confira também `PGHOST`, `PGDATABASE` e `PGUSER`; `PGPORT` usa `5432` por padrão.
 5. Na pasta `backend`, execute `npm install` e depois `npm run dev`.
-6. Acesse `http://127.0.0.1:3000`. Na primeira abertura, crie a conta inicial de gestor na própria tela.
-7. A rota `http://127.0.0.1:3000/api/health/db` informa se a conexão está disponível (`200`) ou se o banco/configuração precisa ser conferido (`503`).
+6. Acesse `http://127.0.0.1:3000`. Na primeira abertura, crie a conta inicial de gestor na própria tela. Abra a aplicação por esse endereço, não pelo arquivo `frontend/index.html` nem por outro servidor estático.
+7. A rota `http://127.0.0.1:3000/api/health` confirma que a API está rodando. A rota `/api/health/db` informa se ela conectou ao PostgreSQL (`200`) ou se a configuração/banco precisa ser conferida (`503`).
 
-Não coloque a senha real em arquivos versionados. O arquivo `backend/.env` é local e está listado no `.gitignore`.
+Não coloque a senha real em arquivos versionados. `backend/.env` contém a configuração local e está listado no `.gitignore`; `.env.example` contém apenas valores de exemplo.
 
 ## Rotas
 
@@ -79,6 +79,7 @@ prototipo_tde/
 │       └── módulos das telas
 └── backend/
     ├── .env (local, ignorado pelo Git)
+    ├── .env.example (modelo sem senha real)
     ├── .gitignore
     ├── package.json
     ├── package-lock.json

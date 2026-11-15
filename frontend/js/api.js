@@ -23,7 +23,9 @@ const API = {
         location.hash = 'login';
         render();
       }
-      throw new Error(result.error || 'Não foi possível concluir a solicitação.');
+      const error = new Error(result.error || 'Não foi possível concluir a solicitação.');
+      error.statusCode = response.status;
+      throw error;
     }
     if (result.csrfToken) this.csrfToken = result.csrfToken;
     if (result.user) this.user = result.user;

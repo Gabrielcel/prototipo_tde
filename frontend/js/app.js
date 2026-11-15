@@ -312,8 +312,14 @@ async function startApp() {
         // Sem sessão ativa, mantém a pessoa na tela de entrada.
       }
     }
-  } catch {
-    S.errs.login = 'Não foi possível conectar à API. Confira se o servidor está iniciado.';
+  } catch (error) {
+    if (!Number.isInteger(error.statusCode)) {
+      S.errs.login = 'Não foi possível alcançar o servidor. Inicie a aplicação na pasta backend e abra http://127.0.0.1:3000; não abra frontend/index.html diretamente.';
+    } else if (error.statusCode >= 500) {
+      S.errs.login = 'O servidor respondeu, mas não conseguiu acessar o PostgreSQL. Confira backend/.env, inicie o PostgreSQL e execute os arquivos SQL do banco.';
+    } else {
+      S.errs.login = `O servidor respondeu com erro ${error.statusCode}. Reinicie a aplicação pela pasta backend e abra http://127.0.0.1:3000.`;
+    }
   }
   render();
 }
