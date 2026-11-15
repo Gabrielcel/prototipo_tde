@@ -6,7 +6,7 @@ import { closeDatabase } from './db.js';
 import { handleRequest } from './routes.js';
 
 const port = Number(process.env.PORT || 3000);
-const projectRoot = resolve(fileURLToPath(new URL('../../', import.meta.url)));
+const frontendRoot = resolve(fileURLToPath(new URL('../../frontend/', import.meta.url)));
 const contentTypes = {
   '.css': 'text/css; charset=utf-8',
   '.html': 'text/html; charset=utf-8',
@@ -31,14 +31,14 @@ async function serveProjectFile(request, response) {
 
   const requestedPath = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '');
   const relativePath = normalize(requestedPath);
-  const filePath = resolve(projectRoot, relativePath);
-  const pathFromRoot = relative(projectRoot, filePath);
+  const filePath = resolve(frontendRoot, relativePath);
+  const pathFromRoot = relative(frontendRoot, filePath);
   const allowedFrontendFile =
     relativePath === 'index.html' ||
     relativePath === 'style.css' ||
     relativePath.startsWith(`js${sep}`) ||
     relativePath.startsWith(`assets${sep}`);
-  if (!allowedFrontendFile || pathFromRoot.startsWith('..') || isAbsolute(pathFromRoot) || filePath === projectRoot) {
+  if (!allowedFrontendFile || pathFromRoot.startsWith('..') || isAbsolute(pathFromRoot) || filePath === frontendRoot) {
     response.writeHead(403);
     return response.end();
   }

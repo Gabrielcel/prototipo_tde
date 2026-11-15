@@ -13,12 +13,12 @@ API em JavaScript com o Node.js, usando HTTP nativo e PostgreSQL. O único pacot
 1. No pgAdmin, crie um banco chamado `sesfa_dev`.
 2. Abra o Query Tool desse banco e execute os arquivos em ordem: `database/001_schema.sql`, `database/002_seed_demo.sql` e `database/003_user_sessions.sql`.
 3. O arquivo `002_seed_demo.sql` insere registros fictícios e pode ser repetido sem duplicá-los. Execute `001_schema.sql` apenas uma vez por banco.
-4. Copie `.env.example` para `.env` e informe o usuário e a senha local do PostgreSQL.
+4. Crie `backend/.env` com `PGHOST`, `PGDATABASE`, `PGUSER` e `PGPASSWORD`. `PGPORT` é opcional e usa `5432` por padrão.
 5. Na pasta `backend`, execute `npm install` e depois `npm run dev`.
 6. Acesse `http://127.0.0.1:3000`. Na primeira abertura, crie a conta inicial de gestor na própria tela.
 7. A rota `http://127.0.0.1:3000/api/health/db` informa se a conexão está disponível (`200`) ou se o banco/configuração precisa ser conferido (`503`).
 
-Nunca coloque a senha real em `.env.example` ou em arquivos versionados. `.env` está listado no `.gitignore`.
+Não coloque a senha real em arquivos versionados. O arquivo `backend/.env` é local e está listado no `.gitignore`.
 
 ## Rotas
 
@@ -65,29 +65,39 @@ O projeto não cria o servidor PostgreSQL nem o banco automaticamente. O Postgre
 
 Os dados dos arquivos de demonstração são fictícios. Não use dados reais de famílias no banco local de teste.
 
-## Estrutura
+## Estrutura do projeto
 
 ```text
-backend/
-├── .env.example
-├── .gitignore
-├── package.json
-├── README.md
-├── database/
-│   ├── 001_schema.sql
-│   ├── 002_seed_demo.sql
-│   └── 003_user_sessions.sql
-└── src/
-    ├── auth.js
-    ├── access.js
-    ├── db.js
-    ├── families.js
-    ├── needs.js
-    ├── reports.js
-    ├── routes.js
-    ├── server.js
-    ├── visits.js
-    └── users.js
+prototipo_tde/
+├── frontend/
+│   ├── index.html
+│   ├── style.css
+│   ├── assets/
+│   └── js/
+│       ├── api.js
+│       ├── app.js
+│       └── módulos das telas
+└── backend/
+    ├── .env (local, ignorado pelo Git)
+    ├── .gitignore
+    ├── package.json
+    ├── package-lock.json
+    ├── README.md
+    ├── database/
+    │   ├── 001_schema.sql
+    │   ├── 002_seed_demo.sql
+    │   └── 003_user_sessions.sql
+    └── src/
+        ├── access.js
+        ├── auth.js
+        ├── db.js
+        ├── families.js
+        ├── needs.js
+        ├── reports.js
+        ├── routes.js
+        ├── server.js
+        ├── users.js
+        └── visits.js
 ```
 
 - `server.js`: inicia e encerra o servidor HTTP e entrega a interface web na mesma origem da API.
@@ -102,7 +112,7 @@ backend/
 - `reports.js`: resumo agregado para os relatórios.
 - `database/*.sql`: estrutura e dados fictícios do banco.
 
-O cliente que conecta as telas à API e ao PostgreSQL fica em `../js/api.js`.
+O cliente que conecta as telas à API fica em `../frontend/js/api.js`. O servidor entrega essa pasta e a API pela mesma origem.
 
 ## Comandos
 
