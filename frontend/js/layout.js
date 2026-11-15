@@ -52,7 +52,7 @@ function shell(c) {
     )
     .join('')}<div class="who"><b>${me()}</b><span>${
     S.role == 'g' ? 'Gestor' : 'Voluntário'
-  }</span><button class="btn t" style="color:#fff;padding:0;margin-top:6px" data-a="logout">Sair</button></div></aside><main>${c}</main></div><nav class="bn" aria-label="Principal">${it
+  }</span><button class="btn t logout" data-a="logout">Sair</button></div></aside><main>${c}</main></div><nav class="bn" aria-label="Principal">${it
     .map(
       n =>
         `<button data-a="go" data-v="${n[0]}" ${act == n[0] ? 'aria-current="page"' : ''}>${ic(

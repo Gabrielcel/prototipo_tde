@@ -1,6 +1,7 @@
 /* Cores, temas e estilos de base */
 :root {
   --az: #2F6FAD;
+  --az-nav: #1F4E79;
   --az2: #4B83BB;
   --az-soft: #EAF3FC;
   --az-hover: #DCEBFA;
@@ -86,8 +87,8 @@ button,input,select,textarea {
 }
 
 aside {
-  background: var(--az-soft);
-  color: var(--tx);
+  background: var(--az-nav);
+  color: #fff;
   padding: 20px 14px;
   display: flex;
   flex-direction: column;
@@ -132,7 +133,7 @@ aside {
   gap: 12px;
   padding: 11px 12px;
   border-radius: 10px;
-  color: var(--mu);
+  color: rgba(255,255,255,.88);
   background: none;
   border: 0;
   cursor: pointer;
@@ -142,12 +143,13 @@ aside {
 }
 
 .nav:hover {
-  background: var(--az-hover)
+  background: rgba(255,255,255,.14);
+  color: #fff
 }
 
 .nav[aria-current=page] {
   background: #fff;
-  color: var(--az);
+  color: var(--az-nav);
   font-weight: 600
 }
 
@@ -165,13 +167,29 @@ svg.i {
 .who {
   margin-top: auto;
   padding: 12px;
-  border-top: 1px solid var(--bd);
+  border-top: 1px solid rgba(255,255,255,.28);
   font-size: 13px
 }
 
 .who span {
-  opacity: .75;
+  opacity: .85;
   display: block
+}
+
+.who button.logout {
+  margin-top: 8px;
+  padding: 4px 10px;
+  min-height: 34px;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.62);
+  border-radius: 8px;
+  background: rgba(255,255,255,.12)
+}
+
+.who button.logout:hover {
+  color: #fff;
+  background: rgba(255,255,255,.22);
+  filter: none
 }
 
 main {
@@ -747,14 +765,6 @@ tr last-child td {
   display: none
 }
 
-.demo {
-  background: var(--inb);
-  color: var(--in);
-  font-size: 12.5px;
-  padding: 6px 12px;
-  text-align: center
-}
-
 /* Ajustes para telas menores */
 @media (max-width: 900px) {
   .app {
@@ -798,8 +808,8 @@ tr last-child td {
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--sf);
-    border-top: 1px solid var(--bd);
+    background: var(--az-nav);
+    border-top: 1px solid rgba(255,255,255,.2);
     z-index: 10;
     padding-bottom: env(safe-area-inset-bottom,0px)
   }
@@ -814,11 +824,12 @@ tr last-child td {
     align-items: center;
     gap: 2px;
     font-size: 11.5px;
-    color: var(--mu);
+    color: rgba(255,255,255,.86);
     cursor: pointer
   }
   .bn button[aria-current=page] {
-    color: var(--az);
+    color: #fff;
+    background: rgba(255,255,255,.14);
     font-weight: 700
   }
 
