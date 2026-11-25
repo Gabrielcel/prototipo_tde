@@ -1,0 +1,7 @@
+node_modules/
+package-lock.json
+*.woff2
+*.webp
+*.svg
+database/
+frontend/js/components/icons-data.js

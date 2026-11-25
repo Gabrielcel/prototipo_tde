@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 48" role="img" aria-label="SESFA - Sistema de Acompanhamento Familiar">
+  <rect width="48" height="48" rx="11" fill="#2F6FAD"/>
+  <path d="M8.5 26C8.5 12.5 39.5 12.5 39.5 26" fill="none" stroke="#9AD9C5" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="19" cy="22" r="4.2" fill="#fff"/>
+  <path d="M11.5 38c0-4.6 3.4-8 7.5-8s7.5 3.4 7.5 8" fill="#fff"/>
+  <circle cx="32" cy="26.5" r="3.2" fill="#fff"/>
+  <path d="M26.2 38c0-3.6 2.6-6.2 5.8-6.2s5.8 2.6 5.8 6.2" fill="#fff"/>
+  <text x="60" y="26" font-family="'Source Sans 3', Arial, sans-serif" font-size="26" font-weight="700" fill="#FFFFFF" letter-spacing="1">SESFA</text>
+  <text x="60" y="41" font-family="'Source Sans 3', Arial, sans-serif" font-size="10.5" fill="#DCEBFA">Acompanhamento Familiar</text>
+</svg>

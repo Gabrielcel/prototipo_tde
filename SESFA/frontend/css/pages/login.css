@@ -1,0 +1,111 @@
+.login-page {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    min-height: 100vh;
+    background: var(--surface);
+}
+
+.login-brand {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-8);
+    padding: clamp(32px, 4vw, 64px);
+    background: var(--blue-700);
+    color: #fff;
+}
+
+.login-brand .brand img {
+    width: 48px;
+    height: 48px;
+}
+
+.login-brand h1 {
+    max-width: 18ch;
+    color: #fff;
+    font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.5rem);
+}
+
+.login-brand p {
+    max-width: 46ch;
+    margin-top: var(--space-3);
+    color: var(--blue-100);
+    font-size: 1.0625rem;
+}
+
+.login-figure {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 25%);
+}
+
+.login-figure img {
+    width: 100%;
+    max-height: 340px;
+    object-fit: cover;
+}
+
+.login-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(24px, 4vw, 64px);
+}
+
+.login-form {
+    width: min(100%, 420px);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.login-form h2 {
+    font-size: 1.625rem;
+    color: var(--blue-700);
+}
+
+.login-security {
+    display: flex;
+    gap: var(--space-2);
+    align-items: flex-start;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+}
+
+.login-security .icon {
+    color: var(--green-600);
+    margin-top: 2px;
+}
+
+.login-mobile-brand {
+    display: none;
+}
+
+@media (max-width: 899px) {
+    .login-page {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .login-brand {
+        display: none;
+    }
+
+    .login-panel {
+        align-items: flex-start;
+        padding-top: var(--space-8);
+    }
+
+    .login-mobile-brand {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        color: var(--blue-700);
+        margin-bottom: var(--space-2);
+    }
+
+    .login-mobile-brand img {
+        width: 44px;
+        height: 44px;
+    }
+}

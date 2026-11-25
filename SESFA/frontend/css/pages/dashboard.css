@@ -1,0 +1,25 @@
+.attention-list li {
+    align-items: flex-start;
+}
+
+.attention-list .icon {
+    margin-top: 2px;
+    color: #b07d00;
+}
+
+.visit-when {
+    min-width: 92px;
+    font-weight: 700;
+    color: var(--blue-700);
+}
+
+.visit-when small {
+    display: block;
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+.visit-when {
+    flex: none;
+    width: 140px;
+}

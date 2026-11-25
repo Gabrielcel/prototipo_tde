@@ -1,0 +1,76 @@
+/* Notebook / tablet largo: barra lateral mais estreita */
+@media (max-width: 1199px) {
+    :root {
+        --sidebar-width: 224px;
+    }
+
+    .split {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* Tablet e celular: navegação superior + inferior */
+@media (max-width: 899px) {
+    .app-shell {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .topbar,
+    .bottom-nav {
+        display: flex;
+    }
+
+    .bottom-nav {
+        display: block;
+    }
+
+    .content {
+        padding-bottom: calc(var(--bottom-nav-height) + var(--space-8));
+    }
+
+    .filters .field-grow {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 599px) {
+    .page-header .actions {
+        width: 100%;
+    }
+
+    .page-header .actions .btn {
+        flex: 1;
+    }
+
+    .card-body {
+        padding: var(--space-4);
+    }
+
+    .card-header,
+    .filters {
+        padding-inline: var(--space-4);
+    }
+
+    .list-rows > li {
+        padding-inline: var(--space-4);
+    }
+
+    .form-actions .btn {
+        flex: 1;
+    }
+
+    .toast-region {
+        inset: auto var(--space-4) calc(var(--bottom-nav-height) + var(--space-4)) auto;
+    }
+}
+
+/* Monitores muito largos: conteúdo centralizado e com respiro proporcional */
+@media (min-width: 1800px) {
+    :root {
+        --content-max: 1560px;
+    }
+}

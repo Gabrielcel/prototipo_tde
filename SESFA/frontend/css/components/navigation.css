@@ -1,0 +1,92 @@
+.tabs {
+    display: flex;
+    gap: var(--space-1);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+}
+
+.tabs a,
+.tabs button {
+    padding: var(--space-3) var(--space-4);
+    border: 0;
+    border-bottom: 3px solid transparent;
+    background: transparent;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.tabs a:hover,
+.tabs button:hover {
+    color: var(--blue-700);
+}
+
+.tabs [aria-current='page'],
+.tabs [aria-selected='true'] {
+    color: var(--blue-700);
+    border-bottom-color: var(--blue-600);
+}
+
+.stepper {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+    counter-reset: step;
+}
+
+.stepper li {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding-bottom: var(--space-2);
+    border-bottom: 4px solid var(--border);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.stepper li::before {
+    counter-increment: step;
+    content: counter(step);
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--blue-100);
+    color: var(--blue-700);
+    font-size: 0.8125rem;
+}
+
+.stepper li[aria-current='step'] {
+    border-bottom-color: var(--blue-600);
+    color: var(--blue-700);
+}
+
+.stepper li[aria-current='step']::before {
+    background: var(--blue-600);
+    color: #fff;
+}
+
+.stepper li.done {
+    border-bottom-color: var(--green-600);
+}
+
+.stepper li.done::before {
+    content: '✓';
+    background: var(--green-600);
+    color: #fff;
+}
+
+@media (max-width: 599px) {
+    .stepper li span {
+        display: none;
+    }
+
+    .stepper li[aria-current='step'] span {
+        display: inline;
+    }
+}

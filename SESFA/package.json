@@ -1,0 +1,26 @@
+{
+    "name": "sesfa",
+    "version": "2.0.0",
+    "private": true,
+    "description": "SESFA - Sistema de Acompanhamento Familiar",
+    "scripts": {
+        "setup": "npm install && npm --prefix backend install",
+        "start": "npm --prefix backend start",
+        "dev": "npm --prefix backend run dev",
+        "migrate": "npm --prefix backend run migrate",
+        "seed:demo": "npm --prefix backend run seed:demo",
+        "test": "npm --prefix backend test",
+        "lint": "eslint .",
+        "format": "prettier --write .",
+        "format:check": "prettier --check ."
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.15.0",
+        "eslint": "^9.15.0",
+        "globals": "^15.12.0",
+        "prettier": "^3.3.3",
+        "jsdom": "^25.0.1",
+        "esbuild": "^0.24.0"
+    },
+    "type": "module"
+}

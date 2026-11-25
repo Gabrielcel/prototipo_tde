@@ -1,0 +1,80 @@
+.checklist-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.checklist-item:last-child {
+    border-bottom: 0;
+}
+
+.checklist-item > .label {
+    flex: 1 1 320px;
+    font-weight: 600;
+}
+
+.record-step {
+    scroll-margin-top: var(--space-6);
+}
+
+.record-step > .card-header h2 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.step-number {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--blue-600);
+    color: #fff;
+    font-size: 0.875rem;
+}
+
+.need-draft {
+    padding: var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+}
+
+.referral-draft {
+    margin-top: var(--space-3);
+    padding: var(--space-3);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+}
+
+.sticky-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    justify-content: space-between;
+    padding: var(--space-4) var(--space-6);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+}
+
+.timeline li {
+    padding: var(--space-3) 0 var(--space-3) var(--space-4);
+    border-left: 3px solid var(--blue-100);
+}
+
+@media (max-width: 899px) {
+    .sticky-actions {
+        bottom: calc(var(--bottom-nav-height) + var(--space-2));
+    }
+}

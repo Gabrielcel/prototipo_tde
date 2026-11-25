@@ -1,0 +1,48 @@
+:root {
+    /* Paleta original preservada, com funções definidas */
+    --blue-700: #1f4e79; /* navegação / institucional */
+    --blue-600: #2f6fad; /* ações principais */
+    --blue-500: #4b83bb; /* secundário */
+    --blue-100: #dcebfa; /* interação */
+    --blue-50: #eaf3fc; /* fundos suaves */
+    --green-700: #2c6558; /* texto sobre fundo verde claro */
+    --green-600: #397f6f; /* positivo / concluído */
+    --green-100: #ddf0ea;
+    --red-700: #9c2f24;
+    --red-600: #b3382c; /* erro / destrutivo */
+    --red-100: #fbe7e4;
+    --yellow-800: #7a4f00;
+    --yellow-100: #fff2d1; /* atenção / pendência */
+
+    --bg: #f4f8fc;
+    --surface: #ffffff;
+    --text: #26394d;
+    --text-muted: #596f84;
+    --border: #d5e1ed;
+    --border-strong: #b7c9db;
+
+    /* Escala de espaçamento (múltiplos de 4px) */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-12: 48px;
+
+    --radius-sm: 6px;
+    --radius: 8px;
+    --radius-lg: 12px;
+
+    --shadow-sm: 0 1px 2px rgb(31 78 121 / 8%);
+    --shadow-md: 0 4px 14px rgb(31 78 121 / 10%);
+    --shadow-lg: 0 12px 32px rgb(31 78 121 / 18%);
+    --focus-ring: 0 0 0 3px rgb(47 111 173 / 40%);
+
+    --sidebar-width: 256px;
+    --content-max: 1440px;
+    --topbar-height: 56px;
+    --bottom-nav-height: 64px;
+
+    --font: 'Source Sans 3', 'Segoe UI', Roboto, Arial, sans-serif;
+}
